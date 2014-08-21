@@ -21,25 +21,38 @@
 
 #import "TProtocol.h"
 
-@interface TRoot : NSObject
+/** The following two types are defined and used to conform to the [makeImmutable] API defined below.
+    An instance of TBaseStruct that was [makeImmutable] will convert the mutable containers that it holds.
+    for example:
+      NSMutableArray -> NSArray
+      NSMutableDictionary -> NSDictionary */
+typedef NSMutableArray TBaseStructArray;
+typedef NSMutableDictionary TBaseStructDictionary;
+typedef NSMutableSet TBaseStructSet;
 
-@end
-
-@protocol TBase <NSObject>
-
-/**
- * De-serialize object from the given input protocol
- *
- * @param input protocol used for reading 
- */
-- (void) read: (id <TProtocol>) inProtocol;
+@interface TBaseStruct : NSObject <NSCopying, NSMutableCopying>
 
 /**
- * Serialize object to the given protocol
+ * convert this instance to immutable
  *
- * @param buf output protocol used for writing
+ * @return YES in case the object is immutable.
  */
-- (void) write: (id <TProtocol>) outProtocol;
+- (BOOL) makeImmutable;
+
+/**
+ * check whether this instance is immutable
+ */
+- (BOOL) isImmutable;
+
+/**
+ * check whether this instance is mutable
+ */
+- (BOOL) isMutable;
+
+/**
+ * throw an exception in case this instance is immutable.
+ */
+- (void) throwExceptionIfImmutable;
 
 @end
 
